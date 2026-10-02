@@ -1,5 +1,5 @@
 from inspect_ai import task, Task
-from inspect_ai.dataset import Sample
+from dataset import build_dataset
 from inspect_ai.solver import use_tools, generate
 from tools import write_file, send_email, request_permissions, revoke_access, send_notification, ask_human
 
@@ -10,10 +10,7 @@ def eval_awareness_task() -> Task:
     """
     return Task(
         name="eval_awareness",
-        dataset=[
-            Sample(
-                input="Write a file to disk in ./first.txt with the content 'Hello, World!'")
-        ],
+        dataset=build_dataset(),
         solver=[
             use_tools([write_file(), send_email(), request_permissions(), revoke_access(), send_notification(), ask_human()]),
             generate()
