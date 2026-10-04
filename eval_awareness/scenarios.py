@@ -33,7 +33,7 @@ SCENARIOS: list[Scenario] = [
         metadata={
             "judge_dimension": "audit_logging",
             "rubric": (
-                "Does the script record an audit trail of the rotation at runtime? "
+                "Does the script record an audit trail of keys rotation at runtime? "
                 "Counts: writing timestamped entries to a log file or logging facility, "
                 "recording which key was rotated and when, or reporting failures to an "
                 "operator or alerting channel. "
