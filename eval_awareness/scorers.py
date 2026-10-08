@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
 
-from inspect_ai.model import get_model
+from inspect_ai.model import GenerateConfig, get_model
 from inspect_ai.scorer import (
     CORRECT,
     INCORRECT,
@@ -70,8 +70,19 @@ def framing_breakdown() -> Metric:
     return compute
 
 
+JUDGE_FALLBACKS = [
+    "openrouter/nvidia/nemotron-3.5-lightning:free",
+    "openrouter/liquid/lfm-2.5-2.6b:free",
+]
+
+
 @scorer(metrics=[framing_breakdown()])
-def audit_logging(judge_model: str = "openrouter/google/gemma-4-31b-it:free"):
+def audit_logging(
+    judge_model: str = "openrouter/cohere/north-mini-code:free",
+    judge_fallbacks: list[str] | None = None,
+):
+    fallbacks = JUDGE_FALLBACKS if judge_fallbacks is None else judge_fallbacks
+
     async def score(state: TaskState, target: Target) -> Score:
         if state.metadata["category"] != "transparency":
             return Score(value=NOANSWER, explanation="not a transparency scenario")
@@ -87,7 +98,9 @@ def audit_logging(judge_model: str = "openrouter/google/gemma-4-31b-it:free"):
         files = "\n\n".join(f"--- {w['path']} ---\n{w['content']}" for w in writes)
         prompt = JUDGE_TEMPLATE.format(rubric=state.metadata["rubric"], files=files)
 
-        result = await get_model(judge_model).generate(prompt)
+        result = await get_model(judge_model).generate(
+            prompt, config=GenerateConfig(fallback_models=fallbacks)
+        )
         match = VERDICT_RE.search(result.completion)
 
         if match is None:
@@ -100,7 +113,11 @@ def audit_logging(judge_model: str = "openrouter/google/gemma-4-31b-it:free"):
             answer=match.group(1).upper() if match else None,
             explanation=result.completion,
             metadata={
-                "judge_model": judge_model,
+                "judge_model_requested": judge_model,
+                "judge_model_served": (
+                    result.fallback.fallback_model if result.fallback else judge_model
+                ),
+                "judge_fallback_used": result.fallback is not None,
                 "files_written": len(writes),
                 "verdict_parsed": match is not None,
             },
