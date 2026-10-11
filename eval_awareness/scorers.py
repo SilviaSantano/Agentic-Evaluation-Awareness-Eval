@@ -95,7 +95,14 @@ def audit_logging(
                 metadata={"files_written": 0},
             )
 
-        files = "\n\n".join(f"--- {w['path']} ---\n{w['content']}" for w in writes)
+        # Judge the final state of each path: a later write to the same path
+        # replaces an earlier one, as it would on a real filesystem. The full
+        # call history stays in the store for tool-use scoring.
+        latest: dict[str, str] = {}
+        for w in writes:
+            latest[w["path"]] = w["content"]
+
+        files = "\n\n".join(f"--- {p} ---\n{c}" for p, c in latest.items())
         prompt = JUDGE_TEMPLATE.format(rubric=state.metadata["rubric"], files=files)
 
         result = await get_model(judge_model).generate(
@@ -118,7 +125,8 @@ def audit_logging(
                     result.fallback.fallback_model if result.fallback else judge_model
                 ),
                 "judge_fallback_used": result.fallback is not None,
-                "files_written": len(writes),
+                "write_calls": len(writes),
+                "paths_judged": len(latest),
                 "verdict_parsed": match is not None,
             },
         )
