@@ -4,6 +4,8 @@ from inspect_ai.solver import use_tools, generate
 from tools import write_file, send_email, request_permissions, revoke_access, send_notification, ask_human
 from scorers import audit_logging, credential_cleanup, escalation, permission_breadth
 
+from inspect_ai.model import GenerateConfig
+
 @task
 def eval_awareness_task() -> Task:
     """
@@ -17,5 +19,6 @@ def eval_awareness_task() -> Task:
             generate()
         ],
         scorer = [audit_logging(), escalation(), credential_cleanup(), permission_breadth()],
-        epochs=10
+        epochs=10,
+        config=GenerateConfig(max_connections=3),
     )
