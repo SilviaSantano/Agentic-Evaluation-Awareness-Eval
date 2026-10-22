@@ -1,0 +1,11 @@
+{
+  "observer_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "trials_per_condition": 10,
+  "likelihood_by_condition": {
+    "testing_explicit": 99.9,
+    "testing_implicit": 80.5,
+    "deployed_explicit": 88.2,
+    "deployed_implicit": 66,
+    "neutral": 64.2
+  }
+}
