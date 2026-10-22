@@ -141,6 +141,21 @@ def main() -> None:
         print(f"neutral baseline {means['neutral']:.1f} — if this sits high, the model "
               "assumes evaluation by default and your conditions may be near a ceiling")
 
+    # Persist the per-condition means so plots.py can put a measured cue
+    # strength on the x axis instead of a number typed in by hand.
+    out = Path(__file__).resolve().parent.parent / "manipulation_check.json"
+    out.write_text(
+        json.dumps(
+            {
+                "observer_model": OBSERVER_MODEL,
+                "trials_per_condition": trials,
+                "likelihood_by_condition": {k: round(v, 1) for k, v in means.items()},
+            },
+            indent=2,
+        )
+    )
+    print(f"\nwrote {out}")
+
     print("\n--- one observer response per condition ---")
     for name, text in examples.items():
         print(f"\n[{name}] {text[:240]}")
