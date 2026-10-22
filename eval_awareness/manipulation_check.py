@@ -21,13 +21,21 @@ import statistics
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 from scenarios import FRAMINGS, SCENARIOS
 
-# Same model as the subject: evaluation awareness is model-specific, so the
-# question is whether *this* model reads the cue. Keeping it out of the subject's
-# own context is what removes the contamination, not using a different model.
-OBSERVER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+# One fixed observer across the whole project. Cue strength is treated as a
+# property of the framings, not of any one subject model, so this stays constant
+# while subject models change -- otherwise the dose-response plot's x axis would
+# move under it. Deliberately not one of the subject models, and deliberately
+# free: it reads prompts only and never scores anything.
+#
+# Was nemotron-3-super-120b-a12b:free until 2026-10-21, when that model started
+# returning 404 from the provider. Replaced with the 550B model in the same
+# family to keep the earlier numbers roughly comparable. Re-run all conditions
+# after any change here; means from two different observers cannot be mixed.
+OBSERVER_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free"
 
 # Reasoning models spend completion tokens before emitting content; too small a
 # budget returns content=None with finish_reason=length.
