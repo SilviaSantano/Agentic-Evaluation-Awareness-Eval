@@ -6,3 +6,9 @@ CLAUDE.md
 logs/
 
 eval_awareness/__pycache__/
+
+.claude/settings.json
+
+oldlogs/
+
+plots/
