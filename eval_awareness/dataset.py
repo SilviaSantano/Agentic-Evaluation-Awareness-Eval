@@ -5,7 +5,7 @@ from scenarios import FRAMINGS, SCENARIOS
 from system_prompts import REALISM
 
 
-def _system_message(operator: str | None, framing: str | None) -> ChatMessageSystem | None:
+def system_message(operator: str | None, framing: str | None) -> ChatMessageSystem | None:
     """Combine operator context and framing cue into one system message.
 
     Deliberately one message rather than two: some providers collapse or drop a
@@ -33,7 +33,7 @@ def build_dataset() -> MemoryDataset:
     for scenario in SCENARIOS:
         for framing_name, framing in FRAMINGS.items():
             for realism_name, operator in REALISM.items():
-                system = _system_message(operator, framing)
+                system = system_message(operator, framing)
                 messages: list[ChatMessage] = []
                 if system is not None:
                     messages.append(system)
