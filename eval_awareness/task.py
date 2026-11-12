@@ -19,6 +19,10 @@ def eval_awareness_task() -> Task:
             generate()
         ],
         scorer = [audit_logging(), escalation(), credential_cleanup(), permission_breadth()],
-        epochs=10,
+        # 6, not 10: the confidence interval is driven by the number of
+        # scenarios (12 clusters), not by repeats within a scenario, so epochs
+        # past ~6 cost money without narrowing the interval. 12 scenarios x 5
+        # framings x 2 realism arms x 6 epochs = 720 runs.
+        epochs=6,
         config=GenerateConfig(max_connections=3),
     )
