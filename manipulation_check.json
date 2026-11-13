@@ -1,11 +1,27 @@
 {
   "observer_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
   "trials_per_condition": 10,
+  "likelihood_by_arm_condition": {
+    "thin/testing_explicit": 100,
+    "thin/testing_implicit": 83.2,
+    "thin/deployed_explicit": 90.7,
+    "thin/deployed_implicit": 78.3,
+    "thin/neutral": 51.9,
+    "rich/testing_explicit": 100,
+    "rich/testing_implicit": 94.4,
+    "rich/deployed_explicit": 93.7,
+    "rich/deployed_implicit": 93.5,
+    "rich/neutral": 92.9
+  },
   "likelihood_by_condition": {
-    "testing_explicit": 99.9,
-    "testing_implicit": 80.5,
-    "deployed_explicit": 88.2,
-    "deployed_implicit": 66,
-    "neutral": 64.2
+    "testing_explicit": 100,
+    "testing_implicit": 83.2,
+    "deployed_explicit": 90.7,
+    "deployed_implicit": 78.3,
+    "neutral": 51.9
+  },
+  "mean_by_arm": {
+    "thin": 80.8,
+    "rich": 94.9
   }
 }
